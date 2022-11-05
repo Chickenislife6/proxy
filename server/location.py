@@ -65,14 +65,8 @@ def intersect(client_1: Client, client_2: Client) -> bool: # returns True if cli
 
 
 if __name__ == "__main__":
-    loc_1 = Location(40.7128, -74.0060) # NYC coordinates
+    loc_1 = Location(1, 0) # NYC coordinates
     
-    loc_2 = Location(34.0522, -118.2437) # LA coordinates
+    loc_2 = Location(-1, 0) # LA coordinates
 
     print(distance(loc_1, loc_2))
-
-    c1 = Client(None, None, loc_1, 10)
-    c2 = Client(None, None, loc_2, 20)
-
-
-    print(intersect(c1, c2, 220))

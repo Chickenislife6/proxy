@@ -64,18 +64,32 @@ class ChatDistanceFactory(WebSocketServerFactory):
             self.clients[client.peer]["partner"] = self.clients[partner_key]["object"]
     
     async def matchPartners(self):
+        close_client: Client = None
         for client_1 in self.clients.values():
             if client_1.partner != None:
                 continue
+
             for client_2 in self.clients.values():
                 if client_2.partner != None:
                     continue
+
+                if client_1 == client_2:
+                    continue
+
                 if intersect(client_1, client_2):
-                    client_1.partner = client_2.object
-                    client_2.partner = client_1.object
-                    break
-            log.err(f"Failed to find a partner for {client_1.object.peer}")
-            print(f"client {client_1.object.peer} has no partner this cycle")
+                    if close_client == None:
+                        close_client = client_2
+                    elif distance(client_1.location, client_2.location) < distance(client_1.location, client_2.location):
+                        close_client = client_2
+
+            if close_client == None:
+                log.err(f"Failed to find a partner for {client_1.object.peer}")
+                print(f"client {client_1.object.peer} has no partner this cycle")
+
+            else:
+                client_1.partner = close_client.object
+                close_client.partner = client_1.object
+
         return None
     
     async def loop(self):
@@ -124,6 +138,17 @@ async def main():
     await task2
 
 if __name__ == "__main__":
-    log.startLogging(sys.stdout)
-    factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
-    asyncio.run(main())
+    #log.startLogging(sys.stdout)
+    #factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
+    #asyncio.run(main())
+
+    loc_1 = Location(40.7128, -74.0060) # NYC coordinates
+    
+    loc_2 = Location(34.0522, -118.2437) # LA coordinates
+
+    loc_3 = 
+
+    print(distance(loc_1, loc_2))
+
+    c1 = Client(None, None, loc_1, 10)
+    c2 = Client(None, None, loc_2, 20)
