@@ -1,6 +1,6 @@
 import json
 import requests
-from types import Location, Client
+from datatypes import Location, Client
 import env
 import bs4
 import math
