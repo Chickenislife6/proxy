@@ -1,61 +1,49 @@
 import sys
 import random
+import time
+from typing import Dict
  
 from twisted.web.static import File
 from twisted.python import log
 from twisted.web.server import Site
 from twisted.internet import reactor
  
-from autobahn.twisted.websocket import WebSocketServerFactory, \
-    WebSocketServerProtocol
+from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
  
 from autobahn.twisted.resource import WebSocketResource
+from SomeServerProtocol import SomeServerProtocol
+from client import Client, Location
+
+from location import get_location
  
  
-class SomeServerProtocol(WebSocketServerProtocol):
-    def onOpen(self):
-        """
-        Connection from client is opened. Fires after opening
-        websockets handshake has been completed and we can send
-        and receive messages.
- 
-        Register client in factory, so that it is able to track it.
-        Try to find conversation partner for this client.
-        """
-        self.factory.register(self)
-        self.factory.findPartner(self)
- 
-    def connectionLost(self, reason):
-        """
-        Client lost connection, either disconnected or some error.
-        Remove client from list of tracked connections.
-        """
-        self.factory.unregister(self)
- 
-    def onMessage(self, payload, isBinary):
-        """
-        Message sent from client, communicate this message to its conversation partner,
-        """
-        self.factory.communicate(self, payload, isBinary)
+
  
  
- 
-class ChatRouletteFactory(WebSocketServerFactory):
+class ChatDistanceFactory(WebSocketServerFactory):
     def __init__(self, *args, **kwargs):
-        super(ChatRouletteFactory, self).__init__(*args, **kwargs)
-        self.clients = {}
+        super(ChatDistanceFactory, self).__init__(*args, **kwargs)
+        self.clients: Dict[str, Client] = {}
  
     def register(self, client):
         """
         Add client to list of managed connections.
         """
-        self.clients[client.peer] = {"object": client, "partner": None}
+        location = get_location(client.http_request_host)
+        client_data = Client(client, None, location, time.time())
+        self.clients[client.peer] = client_data
  
     def unregister(self, client):
         """
         Remove client from list of managed connections.
         """
+        self.clients[client.peer]
+        partner = self.clients[client.peer].partner
+        self.clients[partner].partner = None
+        self.clients[partner].object.sendMessage(b"Your partner disconnected, please wait while we reconnect you.")
+        self.clients[partner].time = time.time()
         self.clients.pop(client.peer)
+
  
     def findPartner(self, client):
         """
@@ -65,6 +53,7 @@ class ChatRouletteFactory(WebSocketServerFactory):
         """
         available_partners = [c for c in self.clients if c != client.peer and not self.clients[c]["partner"]]
         if not available_partners:
+            self.clients[client.peer].object.sendMessage(b"There is no partner at the moment, please wait")
             print("no partners for {} check in a moment".format(client.peer))
         else:
             partner_key = random.choice(available_partners)
@@ -88,7 +77,7 @@ if __name__ == "__main__":
     # static file server seving index.html as root
     root = File(".")
  
-    factory = ChatRouletteFactory(u"ws://127.0.0.1:8080")
+    factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
     factory.protocol = SomeServerProtocol
     resource = WebSocketResource(factory)
     # websockets resource on "/ws" path
