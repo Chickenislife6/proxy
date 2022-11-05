@@ -77,7 +77,7 @@ class ChatRouletteFactory(WebSocketServerFactory):
         """
         c = self.clients[client.peer]
         if not c["partner"]:
-            c["object"].sendMessage("Sorry you dont have partner yet, check back in a minute")
+            c["object"].sendMessage(b"Sorry you dont have partner yet, check back in a minute")
         else:
             c["partner"].sendMessage(payload)
  
