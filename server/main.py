@@ -95,11 +95,13 @@ class ChatDistanceFactory(WebSocketServerFactory):
 
  
     def communicate(self, client, payload, isBinary):
-        self.matchPartners()
+        c = self.clients[client.peer]
+
+        if c.partner == None:
+            self.matchPartners()
         """
         Broker message from client to its partner.
         """
-        c = self.clients[client.peer]
         if not c.partner:
             log.err(f"No partner for {c.object.peer}")
             c.object.sendMessage(b"Sorry you dont have partner yet, check back in a minute")
