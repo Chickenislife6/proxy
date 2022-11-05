@@ -3,7 +3,6 @@ import time
 import requests
 from datatypes import Location, Client
 import env
-import bs4
 import math
 
 def get_location(ip):
@@ -24,6 +23,7 @@ def get_location(ip):
     result = response.text
     result = json.loads(result)
     if response.status_code >= 400:
+        print(ip)
         raise RuntimeError("Malformed request")
     return Location(float(result["latitude"]), float(result["longitude"]))
 

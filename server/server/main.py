@@ -1,4 +1,3 @@
-import asyncio
 import sys
 import random
 import time
@@ -7,18 +6,15 @@ from typing import Dict
 from twisted.web.static import File
 from twisted.python import log
 from twisted.web.server import Site
-from twisted.internet import reactor
+from twisted.internet import reactor, ssl
  
-from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
+from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol, listenWS
  
 from autobahn.twisted.resource import WebSocketResource
 from SomeServerProtocol import SomeServerProtocol
 from datatypes import Client, Location
 
 from location import distance, get_location, intersect
- 
- 
-
  
  
 class ChatDistanceFactory(WebSocketServerFactory):
@@ -39,6 +35,8 @@ class ChatDistanceFactory(WebSocketServerFactory):
         """
         Remove client from list of managed connections.
         """
+        if self.clients.get(client.peer) == None:
+            return
         partner = self.clients[client.peer].partner
         if partner != None:
             self.clients[partner.peer].partner = None
@@ -108,20 +106,36 @@ class ChatDistanceFactory(WebSocketServerFactory):
         else:
             c.partner.sendMessage(payload)
         
-def start_server(factory):
-    # static file server seving index.html as root
-    root = File(".")
+def start_server():
+    # # static file server seving index.html as root
+    # root = File(".")
+    # factory = ChatDistanceFactory(u"ws://0.0.0.0:8080")
+    # factory.protocol = SomeServerProtocol
+    # resource = WebSocketResource(factory)
+    # # websockets resource on "/wss" path
+    # root.putChild(b"ws", resource)
+    
+
+
+    # # factory = ChatDistanceFactory(u"ws://0.0.0.0:8080")
+    # # factory.protocol = SomeServerProtocol
+    # # resource = WebSocketResource(factory)
+    # # # websockets resource on "/ws" path
+    # # root.putChild(b"ws", resource)
+
  
+    # site = Site(root)
+    # reactor.listenTCP(8080, site)
+    # reactor.run()
+
+    # ssl.create_default_context
+    factory = ChatDistanceFactory()
     factory.protocol = SomeServerProtocol
-    resource = WebSocketResource(factory)
-    # websockets resource on "/ws" path
-    root.putChild(b"ws", resource)
- 
-    site = Site(root)
-    reactor.listenTCP(8080, site)
+    listenWS(factory, )
+    reactor.listenTCP(8080, factory, )
     reactor.run()
+
 
 if __name__ == "__main__":
     log.startLogging(sys.stdout)
-    factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
-    start_server(factory)
+    start_server()

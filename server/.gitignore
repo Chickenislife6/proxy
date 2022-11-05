@@ -1,2 +1,4 @@
-env.py
-.pyc
+node_modules
+index.js
+*.json
+*.pyc
