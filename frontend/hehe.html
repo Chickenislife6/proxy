@@ -16,9 +16,9 @@
                 <p id = "p1">Conversation Start</p>
             </div>
             <label><b>Message</b></label>
-            <textarea placeholder="Type message.." name="msg" required></textarea>
+            <textarea placeholder="Type message.." id="msg" required oninput="grabInput()"></textarea>
 
-            <button type="submit" class="btn" onclick="newText('hi')">Send</button>
+            <button type="submit" class="btn" id="submitBtn">Send</button>
             <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
         </div>
     </body>
