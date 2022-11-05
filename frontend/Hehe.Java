@@ -1,5 +1,5 @@
 public class Hehe {
-    string name;
+    String name;
     boolean stupid;
     boolean wearingBlueShirt;
 
