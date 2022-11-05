@@ -1,3 +1,4 @@
+import asyncio
 import sys
 import random
 import time
@@ -14,7 +15,7 @@ from autobahn.twisted.resource import WebSocketResource
 from SomeServerProtocol import SomeServerProtocol
 from client import Client, Location
 
-from location import get_location
+from location import distance, get_location, intersect
  
  
 
@@ -33,6 +34,7 @@ class ChatDistanceFactory(WebSocketServerFactory):
         client_data = Client(client, None, location, time.time())
         self.clients[client.peer] = client_data
  
+
     def unregister(self, client):
         """
         Remove client from list of managed connections.
@@ -43,6 +45,7 @@ class ChatDistanceFactory(WebSocketServerFactory):
         self.clients[partner].object.sendMessage(b"Your partner disconnected, please wait while we reconnect you.")
         self.clients[partner].time = time.time()
         self.clients.pop(client.peer)
+
 
  
     def findPartner(self, client):
@@ -59,6 +62,17 @@ class ChatDistanceFactory(WebSocketServerFactory):
             partner_key = random.choice(available_partners)
             self.clients[partner_key]["partner"] = client
             self.clients[client.peer]["partner"] = self.clients[partner_key]["object"]
+    
+    async def matchPartners(self):
+        for client in self.clients.values():
+            if client.partner != None:
+                break
+            for partner in self.clients.values():
+                if partner.partner != None:
+                    break
+                if intersect():
+                    pass
+                
  
     def communicate(self, client, payload, isBinary):
         """
@@ -69,11 +83,10 @@ class ChatDistanceFactory(WebSocketServerFactory):
             c["object"].sendMessage(b"Sorry you dont have partner yet, check back in a minute")
         else:
             c["partner"].sendMessage(payload)
- 
- 
-if __name__ == "__main__":
+        
+async def main():
     log.startLogging(sys.stdout)
- 
+
     # static file server seving index.html as root
     root = File(".")
  
@@ -86,3 +99,12 @@ if __name__ == "__main__":
     site = Site(root)
     reactor.listenTCP(8080, site)
     reactor.run()
+
+if __name__ == "__main__":
+    import time
+    s = time.perf_counter()
+    asyncio.gather(main(), )
+    elapsed = time.perf_counter() - s
+    print(f"{__file__} executed in {elapsed:0.2f} seconds.")
+ 
+ 

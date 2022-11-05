@@ -1,6 +1,6 @@
 import json
 import requests
-from client import Location
+from types import Location, Client
 import env
 import bs4
 def get_location(ip):
@@ -27,6 +27,6 @@ def distance(loc_1: Location, loc_2: Location) -> float:
     # calculate the distance between 2 points
     return 0
 
-def intersect(distance, time_1, time_2, speed_1, speed_2) -> bool:
+def intersect(client_1: Client, client_2: Client) -> bool:
     
     return False
