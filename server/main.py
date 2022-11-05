@@ -63,13 +63,8 @@ class ChatDistanceFactory(WebSocketServerFactory):
             self.clients[partner_key]["partner"] = client
             self.clients[client.peer]["partner"] = self.clients[partner_key]["object"]
     
-<<<<<<< HEAD
-    async def matchPartners(self):
-        close_client: Client = None
-=======
     def matchPartners(self):
-        
->>>>>>> 7e42dab4cbad2ad94d603063177b1b9ce33149f2
+        close_client: Client = None
         for client_1 in self.clients.values():
             log.msg(f"Matching for {client_1.object.peer}")
             if client_1.partner != None:
@@ -78,7 +73,6 @@ class ChatDistanceFactory(WebSocketServerFactory):
             for client_2 in self.clients.values():
                 if client_2.partner != None:
                     continue
-<<<<<<< HEAD
 
                 if client_1 == client_2:
                     continue
@@ -97,17 +91,6 @@ class ChatDistanceFactory(WebSocketServerFactory):
                 client_1.partner = close_client.object
                 close_client.partner = client_1.object
 
-=======
-                if client_1 == client_2:
-                    continue
-                if intersect(client_1, client_2):
-                    log.msg(f"matched {client_1.object.peer} to {client_2.object.peer}")
-                    client_1.partner = client_2.object
-                    client_2.partner = client_1.object
-                    break
-            log.err(f"Failed to find a partner for {client_1.object.peer}")
-            print(f"client {client_1.object.peer} has no partner this cycle")
->>>>>>> 7e42dab4cbad2ad94d603063177b1b9ce33149f2
         return None
 
  
@@ -124,7 +107,6 @@ class ChatDistanceFactory(WebSocketServerFactory):
             c.partner.sendMessage(payload)
         
 def start_server(factory):
-
     # static file server seving index.html as root
     root = File(".")
  
@@ -138,23 +120,6 @@ def start_server(factory):
     reactor.run()
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    #log.startLogging(sys.stdout)
-    #factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
-    #asyncio.run(main())
-
-    loc_1 = Location(40.7128, -74.0060) # NYC coordinates
-    
-    loc_2 = Location(34.0522, -118.2437) # LA coordinates
-
-    loc_3 = 
-
-    print(distance(loc_1, loc_2))
-
-    c1 = Client(None, None, loc_1, 10)
-    c2 = Client(None, None, loc_2, 20)
-=======
     log.startLogging(sys.stdout)
     factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
     start_server(factory)
->>>>>>> 7e42dab4cbad2ad94d603063177b1b9ce33149f2
