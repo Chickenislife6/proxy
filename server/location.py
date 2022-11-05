@@ -1,4 +1,5 @@
 import json
+import time
 import requests
 from datatypes import Location, Client
 import env
@@ -41,16 +42,35 @@ def distance(loc_1: Location, loc_2: Location) -> float:
 
     return d # distance in km
 
-def intersect(client_1: Client, client_2: Client) -> bool:
-    
-    return False
+def intersect(client_1: Client, client_2: Client) -> bool: # returns True if clients are intersecting one another, False otherwise
+
+    dist = distance(client_1.location, client_2.location) # distance between the two clients
+
+    # calculate elapsed time for both clients
+    current_time = t
+    c1_elapsed = current_time - client_1.time # gives time in seconds
+    c2_elapsed = current_time - client_2.time
+
+    # calculate distance "covered" by both clients
+    c1_dist = c1_elapsed * client_1.speed # speed is in km per second
+    c2_dist = c2_elapsed * client_2.speed
+
+    if dist < c1_dist + c2_dist:
+        return True
+
+    else:
+        return False
 
 
 if __name__ == "__main__":
-    loc_1 = Location(10.1824542, -25.1389054)
+    loc_1 = Location(40.7128, -74.0060) # NYC coordinates
     
-    loc_2 = Location(45.0123102, -231.120943)
+    loc_2 = Location(34.0522, -118.2437) # LA coordinates
 
     print(distance(loc_1, loc_2))
 
-    
+    c1 = Client(None, None, loc_1, 10)
+    c2 = Client(None, None, loc_2, 20)
+
+
+    print(intersect(c1, c2, 220))
