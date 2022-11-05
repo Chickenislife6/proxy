@@ -1,6 +1,6 @@
 import json
 import requests
-from client import Location
+from types import Location, Client
 import env
 import bs4
 import math
@@ -41,7 +41,7 @@ def distance(loc_1: Location, loc_2: Location) -> float:
 
     return d # distance in km
 
-def intersect(distance, time_1, time_2, speed_1, speed_2) -> bool:
+def intersect(client_1: Client, client_2: Client) -> bool:
     
     return False
 

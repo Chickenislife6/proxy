@@ -13,3 +13,4 @@ class Client():
     partner: str
     location: Location
     time: int
+    speed: float = 10
