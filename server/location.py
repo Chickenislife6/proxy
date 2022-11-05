@@ -47,7 +47,7 @@ def intersect(client_1: Client, client_2: Client) -> bool: # returns True if cli
     dist = distance(client_1.location, client_2.location) # distance between the two clients
 
     # calculate elapsed time for both clients
-    current_time = t
+    current_time = time.time()
     c1_elapsed = current_time - client_1.time # gives time in seconds
     c2_elapsed = current_time - client_2.time
 
