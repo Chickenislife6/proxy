@@ -3,7 +3,7 @@ import sys
 import random
 import time
 from typing import Dict
- 
+import multiprocessing as mp
 from twisted.web.static import File
 from twisted.python import log
 from twisted.web.server import Site
@@ -63,7 +63,9 @@ class ChatDistanceFactory(WebSocketServerFactory):
             self.clients[partner_key]["partner"] = client
             self.clients[client.peer]["partner"] = self.clients[partner_key]["object"]
     
-    async def matchPartners(self):
+    def matchPartners(self):
+        """
+        """
         for client_1 in self.clients.values():
             if client_1.partner != None:
                 continue
@@ -78,12 +80,12 @@ class ChatDistanceFactory(WebSocketServerFactory):
             print(f"client {client_1.object.peer} has no partner this cycle")
         return None
     
-    async def loop(self):
+    def loop(self):
         log.msg("In loop")
         while True:
             time.sleep(10)
             log.msg("Starting matching process")
-            await self.matchPartners()
+            self.matchPartners()
                 
  
     def communicate(self, client, payload, isBinary):
@@ -97,11 +99,10 @@ class ChatDistanceFactory(WebSocketServerFactory):
         else:
             c.partner.sendMessage(payload)
         
-async def start_server(factory):
-
+def main():
     # static file server seving index.html as root
     root = File(".")
- 
+    factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
     factory.protocol = SomeServerProtocol
     resource = WebSocketResource(factory)
     # websockets resource on "/ws" path
@@ -109,21 +110,13 @@ async def start_server(factory):
  
     site = Site(root)
     reactor.listenTCP(8080, site)
+    p2 = mp.Process(target=factory.loop)
+    p2.start()
     reactor.run()
 
-async def main():
-    task2 = asyncio.create_task(
-        factory.loop())
+    
 
-    task1 = asyncio.create_task(
-        start_server(factory))
-
-
-
-    await task1
-    await task2
 
 if __name__ == "__main__":
     log.startLogging(sys.stdout)
-    factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
-    asyncio.run(main())
+    main()
