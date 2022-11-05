@@ -9,6 +9,8 @@ import math
 def get_location(ip):
     # Returns: (Latitude: str, Longitude: str)
     # Raises: RuntimeError
+    if (ip == "127.0.0.1"):
+        return Location(0, 0)
     api_key = env.key
     # api url
     url = f"https://api.apilayer.com/ip_to_location/{ip}"
@@ -47,7 +49,7 @@ def intersect(client_1: Client, client_2: Client) -> bool: # returns True if cli
     dist = distance(client_1.location, client_2.location) # distance between the two clients
 
     # calculate elapsed time for both clients
-    current_time = t
+    current_time = time.time()
     c1_elapsed = current_time - client_1.time # gives time in seconds
     c2_elapsed = current_time - client_2.time
 

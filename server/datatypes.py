@@ -10,7 +10,7 @@ class Location():
 @dataclass
 class Client():
     object: SomeServerProtocol
-    partner: str
+    partner: SomeServerProtocol
     location: Location
     time: int
     speed: float = 10

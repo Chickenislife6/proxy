@@ -11,7 +11,7 @@ class SomeServerProtocol(WebSocketServerProtocol):
         Try to find conversation partner for this client.
         """
         self.factory.register(self)
-        self.factory.findPartner(self)
+        # self.factory.findPartner(self)
  
     def connectionLost(self, reason):
         """

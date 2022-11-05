@@ -13,7 +13,7 @@ from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerPr
  
 from autobahn.twisted.resource import WebSocketResource
 from SomeServerProtocol import SomeServerProtocol
-from client import Client, Location
+from datatypes import Client, Location
 
 from location import distance, get_location, intersect
  
@@ -39,11 +39,11 @@ class ChatDistanceFactory(WebSocketServerFactory):
         """
         Remove client from list of managed connections.
         """
-        self.clients[client.peer]
         partner = self.clients[client.peer].partner
-        self.clients[partner].partner = None
-        self.clients[partner].object.sendMessage(b"Your partner disconnected, please wait while we reconnect you.")
-        self.clients[partner].time = time.time()
+        if partner != None:
+            self.clients[partner.peer].partner = None
+            self.clients[partner.peer].object.sendMessage(b"Your partner disconnected, please wait while we reconnect you.")
+            self.clients[partner.peer].time = time.time()
         self.clients.pop(client.peer)
 
 
@@ -64,14 +64,26 @@ class ChatDistanceFactory(WebSocketServerFactory):
             self.clients[client.peer]["partner"] = self.clients[partner_key]["object"]
     
     async def matchPartners(self):
-        for client in self.clients.values():
-            if client.partner != None:
-                break
-            for partner in self.clients.values():
-                if partner.partner != None:
+        for client_1 in self.clients.values():
+            if client_1.partner != None:
+                continue
+            for client_2 in self.clients.values():
+                if client_2.partner != None:
+                    continue
+                if intersect(client_1, client_2):
+                    client_1.partner = client_2.object
+                    client_2.partner = client_1.object
                     break
-                if intersect():
-                    pass
+            log.err(f"Failed to find a partner for {client_1.object.peer}")
+            print(f"client {client_1.object.peer} has no partner this cycle")
+        return None
+    
+    async def loop(self):
+        log.msg("In loop")
+        while True:
+            time.sleep(10)
+            log.msg("Starting matching process")
+            await self.matchPartners()
                 
  
     def communicate(self, client, payload, isBinary):
@@ -79,18 +91,17 @@ class ChatDistanceFactory(WebSocketServerFactory):
         Broker message from client to its partner.
         """
         c = self.clients[client.peer]
-        if not c["partner"]:
-            c["object"].sendMessage(b"Sorry you dont have partner yet, check back in a minute")
+        if not c.partner:
+            log.err(f"No partner for {c.object.peer}")
+            c.object.sendMessage(b"Sorry you dont have partner yet, check back in a minute")
         else:
-            c["partner"].sendMessage(payload)
+            c.partner.sendMessage(payload)
         
-async def main():
-    log.startLogging(sys.stdout)
+async def start_server(factory):
 
     # static file server seving index.html as root
     root = File(".")
  
-    factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
     factory.protocol = SomeServerProtocol
     resource = WebSocketResource(factory)
     # websockets resource on "/ws" path
@@ -100,11 +111,19 @@ async def main():
     reactor.listenTCP(8080, site)
     reactor.run()
 
+async def main():
+    task2 = asyncio.create_task(
+        factory.loop())
+
+    task1 = asyncio.create_task(
+        start_server(factory))
+
+
+
+    await task1
+    await task2
+
 if __name__ == "__main__":
-    import time
-    s = time.perf_counter()
-    asyncio.gather(main(), )
-    elapsed = time.perf_counter() - s
-    print(f"{__file__} executed in {elapsed:0.2f} seconds.")
- 
- 
+    log.startLogging(sys.stdout)
+    factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
+    asyncio.run(main())
