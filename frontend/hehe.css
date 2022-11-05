@@ -1,0 +1,23 @@
+body{
+  text-align: center;
+  background-color: #1abc9c;
+  margin: 0px;
+}
+header{
+  background-color: crimson;
+  display: inline-block;
+  width: 100%;
+}
+footer{
+  background-color: white;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.div1{
+    border: 5px outset green;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}

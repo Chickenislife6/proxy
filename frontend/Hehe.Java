@@ -13,4 +13,16 @@ public class Hehe {
         }
     }
 
+    public static Hehe(String name, boolean wearingBlueShirt = true) {
+        name = name;
+        wearingBlueShirt = wearingBlueShirt;
+        while (wearingBlueShirt) {
+            if (name == "Tyler") {
+                stupid = true;
+            } else {
+                stupid = false;
+            }
+        }
+    }
+
 }
