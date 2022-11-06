@@ -19,12 +19,9 @@
                     }
                 });
                 chatRoom = document.getElementById("chatroom")
-                chatRoom.addEventListener("input", function(){
+                chatRoom.addEventListener("change", function(){
                     chatroom = chatRoom.value;
-                    if(chatroom.trim() != ""){
-                        console.log("Test")
-                        localStorage.setItem("storedChatRoom", chatroom);
-                    }
+                    localStorage.setItem("storedChatRoom", chatroom);
                 });
             });
         </script>
