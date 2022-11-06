@@ -48,7 +48,7 @@ class ChatDistanceFactory(WebSocketServerFactory):
         """
         Remove client from list of managed connections.
         """
-        if self.clients.get(client, None) == None:
+        if self.clients.get(client.peer, None) == None:
             return
         partner = self.clients[client.peer].partner
         if partner != None:
