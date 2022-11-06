@@ -109,15 +109,10 @@ class ChatDistanceFactory(WebSocketServerFactory):
         
 def start_server(factory):
     # static file server seving index.html as root
-    root = File(".")
- 
+    factory = ChatDistanceFactory()
     factory.protocol = SomeServerProtocol
-    resource = WebSocketResource(factory)
     # websockets resource on "/ws" path
-    root.putChild(b"ws", resource)
- 
-    site = Site(root)
-    reactor.listenTCP(8080, site)
+    reactor.listenTCP(8080, factory)
     reactor.run()
 
 if __name__ == "__main__":

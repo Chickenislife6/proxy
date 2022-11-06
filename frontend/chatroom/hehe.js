@@ -1,5 +1,5 @@
-
-let mySocket = new WebSocket("ws://127.0.0.1:8080/ws");
+let append = localStorage.getItem("storedChatRoom") === null ? "" : localStorage.getItem("storedChatRoom");
+let mySocket = new WebSocket("ws://127.0.0.1:8080/"+append);
 
 mySocket.onmessage = function (event) {
     console.log(event.data)
@@ -13,9 +13,22 @@ mySocket.onmessage = function (event) {
 window.addEventListener('load', main);
 function main(){
     //alert(localStorage.getItem("storedUsername"));
-    mySocket.send("Hello, you are chatting with " + localStorage.getItem("storedUsername"))
-    sendMsg();
+    console.log(document.getElementById("submitBtn").className)
+    document.getElementById("submitBtn").addEventListener("click", (event) => {
+        event.preventDefault();
+        let txt = document.getElementById("msg");
+        outgoing_msg = txt.value
+        mySocket.send(outgoing_msg);
+
+        let newElement = document.createElement("p")
+        newElement.classList.add("this");
+        newElement.innerHTML = outgoing_msg;
+        document.getElementById('chat').appendChild(newElement)
+
+        document.getElementById("msg").value = "";
     
+})
+    mySocket.send("Hello, you are chatting with " + localStorage.getItem("storedUsername"))
     
     //window.addEventListener('load', );
 /*
@@ -31,22 +44,6 @@ function main(){
 
 //global variables
 
-function sendMsg(){
-    let txt = document.getElementById("msg");
-    outgoing_msg = txt.value
-    mySocket.send(outgoing_msg);
-
-    let newElement = document.createElement("p")
-    newElement.classList.add("this");
-    newElement.innerHTML = outgoing_msg;
-    document.getElementById('chat').appendChild(newElement)
-
-    document.getElementById("msg").value = "";
-}
-
-function receiveMsg(){
-
-    };
 
     
 

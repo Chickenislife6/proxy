@@ -16,6 +16,10 @@
                     else {
                         alert("Please enter your username!");
                     }
+                chatRoom = document.getElementById("chatroom", () => {
+                    chatroom = chatRoom.value;
+                    localStorage.setItem("storedChatRoom", chatroom);
+                })
                 })
             });
         </script>
@@ -47,6 +51,7 @@
             <div class ="display">
                 <h3>Username</h3>
                 <input type="alphanumeric" id="username" placeholder="username" oninput="username = document.getElementByID('username').value">
+                <input type="alphanumeric" id="chatroom" placeholder="chatroom" oninput="chatroom = document.getElementByID('username').value">
             </div>
                 <a href="../frontend/chatroom/hehe.html">
                     <button type="button" id="submit">
