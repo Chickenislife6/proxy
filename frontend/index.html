@@ -6,6 +6,7 @@
         <script type="text/javascript">
             let submit = document.getElementById("submit");
             let username = "";
+            let chatroom = "";
             window.addEventListener("load", function(){
                 userInput = document.getElementById("username")
                 userInput.addEventListener("input", function(){
@@ -16,11 +17,15 @@
                     else {
                         alert("Please enter your username!");
                     }
-                chatRoom = document.getElementById("chatroom", () => {
+                });
+                chatRoom = document.getElementById("chatroom")
+                chatRoom.addEventListener("input", function(){
                     chatroom = chatRoom.value;
-                    localStorage.setItem("storedChatRoom", chatroom);
-                })
-                })
+                    if(chatroom.trim() != ""){
+                        console.log("Test")
+                        localStorage.setItem("storedChatRoom", chatroom);
+                    }
+                });
             });
         </script>
         <meta charset="utf-8"/>
@@ -50,8 +55,8 @@
 
             <div class ="display">
                 <h3>Username</h3>
-                <input type="alphanumeric" id="username" placeholder="username" oninput="username = document.getElementByID('username').value">
-                <input type="alphanumeric" id="chatroom" placeholder="chatroom" oninput="chatroom = document.getElementByID('username').value">
+                <input type="alphanumeric" id="username" placeholder="username" oninput="username = document.getElementById('username').value">
+                <input type="alphanumeric" id="chatroom" placeholder="chatroom" oninput="chatroom = document.getElementById('chatroom').value">
             </div>
                 <a href="../frontend/chatroom/hehe.html">
                     <button type="button" id="submit">
