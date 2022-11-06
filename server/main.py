@@ -25,7 +25,7 @@ class ChatDistanceFactory(WebSocketServerFactory):
     def __init__(self, *args, **kwargs):
         super(ChatDistanceFactory, self).__init__(*args, **kwargs)
         self.clients: Dict[str, Client] = {}
-        self.url_set: Dict[Client, str] = {}
+        self.url_set: Dict[str, Client] = {}
  
     def register(self, client: SomeServerProtocol):
         """
@@ -34,24 +34,22 @@ class ChatDistanceFactory(WebSocketServerFactory):
         location = get_location(client.http_request_host)
         client_data = Client(client, None, location, time.time())
         self.clients[client.peer] = client_data # maps the client object to the string associated with the client.
-        self.url_set.update({client_data : client.http_request_uri}) # adds the client and their associated URL to the database.
 
-        # handles whether or not another client has joined with the same URL
-        for client_inst in self.url_set:
-            if client_inst == client_data:
-                continue
-            if client_inst.partner != None:
-                continue
-            if self.url_set[client_inst] == self.url_set[client_data]: # connects the two clients as partners
-                client_data.partner == client_inst.object
-                client_inst.partner == client_data.object
+        if client.http_request_uri != "/":
+            if self.url_set.get(client.http_request_uri, None) != None:
+                self.url_set[client.http_request_uri].partner = client
+                client_data.partner = self.url_set[client.http_request_uri].object
+                self.url_set.pop(client.http_request_uri)
+            else:
+                self.url_set[client.http_request_uri] = client_data # adds the client and their associated URL to the database.
 
- 
 
     def unregister(self, client): # unregisters a client and stars searching for a new one for their former partner
         """
         Remove client from list of managed connections.
         """
+        if self.clients.get(client, None) == None:
+            return
         partner = self.clients[client.peer].partner
         if partner != None:
             self.clients[partner.peer].partner = None
@@ -60,45 +58,27 @@ class ChatDistanceFactory(WebSocketServerFactory):
 
         # remove client instances from both dictionaries
         self.clients.pop(client.peer)
-        self.url_set.pop(client)
-
-
- 
-    def findPartner(self, client):
-        """
-        Find chat partner for a client. Check if there any of tracked clients
-        is idle. If there is no idle client just exit quietly. If there is
-        available partner assign him/her to our client.
-        """
-        available_partners = [c for c in self.clients if c != client.peer and not self.clients[c]["partner"]]
-        if not available_partners:
-            self.clients[client.peer].object.sendMessage(b"There is no partner at the moment, please wait")
-            print("no partners for {} check in a moment".format(client.peer))
-        else:
-            partner_key = random.choice(available_partners)
-            self.clients[partner_key]["partner"] = client
-            self.clients[client.peer]["partner"] = self.clients[partner_key]["object"]
+        self.url_set.pop(client, None)
     
     def matchPartners(self):
-<<<<<<< HEAD
-        
-=======
->>>>>>> main
         close_client: Client = None
         for client_1 in self.clients.values():
             log.msg(f"Matching for {client_1.object.peer}")
+            
             if client_1.partner != None:
+                continue
+            if client_1 in self.url_set.values():
                 continue
 
             for client_2 in self.clients.values():
                 if client_2.partner != None:
                     continue
-<<<<<<< HEAD
-=======
-
->>>>>>> main
+                if client_2 in self.url_set.values():
+                    continue
                 if client_1 == client_2:
                     continue
+
+
                 if intersect(client_1, client_2):
                     if close_client == None:
                         close_client = client_2
@@ -133,21 +113,14 @@ class ChatDistanceFactory(WebSocketServerFactory):
 def start_server(factory):
     # static file server seving index.html as root
     root = File(".")
- 
+    factory = ChatDistanceFactory()
     factory.protocol = SomeServerProtocol
-    resource = WebSocketResource(factory)
     # websockets resource on "/ws" path
-    root.putChild(b"ws", resource)
  
-    site = Site(root)
-    reactor.listenTCP(8080, site)
+    reactor.listenTCP(8080, factory)
     reactor.run()
 
 if __name__ == "__main__":
     log.startLogging(sys.stdout)
     factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
-<<<<<<< HEAD
     start_server(factory)
-=======
-    start_server(factory)
->>>>>>> main
