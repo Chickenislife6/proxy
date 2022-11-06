@@ -7,6 +7,8 @@
             window.addEventListener("load", function(){
                 let username = localStorage.getItem("storedUsername");
                 document.getElementById("username").innerHTML= username;
+                let chatroom = localStorage.getItem("storedChatRoom");
+                document.getElementById("chatroom").innerHTML= chatroom;
             })
         </script>
         <link rel="stylesheet" href="../chatroom/hehe.css"/>
@@ -16,6 +18,7 @@
     </header>
     <body>
         <h1>Your Username: <span id="username"></span></h1>
+        <h1>Chatroom: <span id="chatroom"></span></h1>
         <div class="div1" id="myForm">
             <h1>Chat</h1>
             <div id="chat">
