@@ -1,9 +1,23 @@
+
+let mySocket = new WebSocket("ws://127.0.0.1:8080/ws");
+
+mySocket.onmessage = function (event) {
+    console.log(event.data)
+    let newElement = document.createElement("p")
+    newElement.classList.add("that");
+    newElement.innerHTML = event.data;
+    document.getElementById('chat').appendChild(newElement)
+}
+
+
 window.addEventListener('load', main);
 function main(){
-    let mySocket = new WebSocket("ws://localhost:8080/ws");
+    //alert(localStorage.getItem("storedUsername"));
+    mySocket.send("Hello, you are chatting with " + localStorage.getItem("storedUsername"))
     sendMsg();
-    receiveMsg();
     
+    
+    //window.addEventListener('load', );
 /*
     let form = document.getElementsByClassName("form");
     let input = document.getElementById("msg");
@@ -16,7 +30,6 @@ function main(){
 }
 
 //global variables
-let msg="";
 
 function sendMsg(){
     let txt = document.getElementById("msg");
@@ -25,24 +38,18 @@ function sendMsg(){
 
     let newElement = document.createElement("p")
     newElement.classList.add("this");
-    newElement.innerHTML = msg;
+    newElement.innerHTML = outgoing_msg;
     document.getElementById('chat').appendChild(newElement)
 
     document.getElementById("msg").value = "";
-    msg = "";
 }
 
 function receiveMsg(){
-    mySocket.onmessage = function (event) {
-        let newElement = document.createElement("p")
-        newElement.classList.add("that");
-        newElement.innerHTML = event.data;
-        document.getElementById('chat').appendChild(newElement)
+
     };
 
     
-}
 
 function closeForm(){
-    
+    localStorage.clear();
 }

@@ -5,10 +5,19 @@
         <link rel="stylesheet" href="CSS/general.css"/>
         <script type="text/javascript">
             let submit = document.getElementById("submit");
-            submit.addEventListener("click", function(){
-                let username = document.getElementById("username");
-                localStorage.setItem("storedUsername", username);
-            }
+            let username = "";
+            window.addEventListener("load", function(){
+                userInput = document.getElementById("username")
+                userInput.addEventListener("input", function(){
+                    username = userInput.value;
+                    if(username.trim() != ""){
+                        localStorage.setItem("storedUsername", username);
+                    }
+                    else {
+                        alert("Please enter your username!");
+                    }
+                })
+            });
         </script>
         <meta charset="utf-8"/>
     </head>
@@ -37,7 +46,7 @@
 
             <div class ="display">
                 <h3>Username</h3>
-                <input type="alphanumeric" id="username" placeholder="username">
+                <input type="alphanumeric" id="username" placeholder="username" oninput="username = document.getElementByID('username').value">
             </div>
                 <a href="../frontend/chatroom/hehe.html">
                     <button type="button" id="submit">

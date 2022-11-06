@@ -4,7 +4,10 @@
         <title>hehe</title>
         <script type="text/javascript" src="../chatroom/hehe.js"></script>
         <script type="text/javascript">
-            localStorage.getItem("storedUsername")
+            window.addEventListener("load", function(){
+                let username = localStorage.getItem("storedUsername");
+                document.getElementById("username").innerHTML= username;
+            })
         </script>
         <link rel="stylesheet" href="../chatroom/hehe.css"/>
     </head>
@@ -12,7 +15,7 @@
         <h1>Tyler Sucks BTW</h1>
     </header>
     <body>
-        <h1>Hoe</h1>
+        <h1>Your Username: <span id="username"></span></h1>
         <div class="div1" id="myForm">
             <h1>Chat</h1>
             <div id="chat">

@@ -2,16 +2,15 @@ import json
 import time
 import requests
 from datatypes import Location, Client
-import env
-import bs4
 import math
 
 def get_location(ip):
+    return Location(0, 0)
+
     # Returns: (Latitude: str, Longitude: str)
     # Raises: RuntimeError
-    if (ip == "127.0.0.1"):
-        return Location(0, 0)
-    api_key = env.key
+    # if (ip == "127.0.0.1"):
+    api_key = "a"
     # api url
     url = f"https://api.apilayer.com/ip_to_location/{ip}"
 

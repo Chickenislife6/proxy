@@ -18,21 +18,20 @@ from datatypes import Client, Location
 from location import distance, get_location, intersect
  
  
-
- 
- 
 class ChatDistanceFactory(WebSocketServerFactory):
     def __init__(self, *args, **kwargs):
         super(ChatDistanceFactory, self).__init__(*args, **kwargs)
         self.clients: Dict[str, Client] = {}
  
     def register(self, client):
+        print("sdofjdsoifs")
         """
         Add client to list of managed connections.
         """
         location = get_location(client.http_request_host)
         client_data = Client(client, None, location, time.time())
         self.clients[client.peer] = client_data
+        
  
 
     def unregister(self, client):
