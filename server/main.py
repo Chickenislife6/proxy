@@ -25,17 +25,30 @@ class ChatDistanceFactory(WebSocketServerFactory):
     def __init__(self, *args, **kwargs):
         super(ChatDistanceFactory, self).__init__(*args, **kwargs)
         self.clients: Dict[str, Client] = {}
+        self.url_set: Dict[Client, str] = {}
  
-    def register(self, client):
+    def register(self, client: SomeServerProtocol):
         """
         Add client to list of managed connections.
         """
         location = get_location(client.http_request_host)
         client_data = Client(client, None, location, time.time())
-        self.clients[client.peer] = client_data
+        self.clients[client.peer] = client_data # maps the client object to the string associated with the client.
+        self.url_set.update({client_data : client.http_request_uri}) # adds the client and their associated URL to the database.
+
+        # handles whether or not another client has joined with the same URL
+        for client_inst in self.url_set:
+            if client_inst == client_data:
+                continue
+            if client_inst.partner != None:
+                continue
+            if self.url_set[client_inst] == self.url_set[client_data]: # connects the two clients as partners
+                client_data.partner == client_inst.object
+                client_inst.partner == client_data.object
+
  
 
-    def unregister(self, client):
+    def unregister(self, client): # unregisters a client and stars searching for a new one for their former partner
         """
         Remove client from list of managed connections.
         """
@@ -44,7 +57,10 @@ class ChatDistanceFactory(WebSocketServerFactory):
             self.clients[partner.peer].partner = None
             self.clients[partner.peer].object.sendMessage(b"Your partner disconnected, please wait while we reconnect you.")
             self.clients[partner.peer].time = time.time()
+
+        # remove client instances from both dictionaries
         self.clients.pop(client.peer)
+        self.url_set.pop(client)
 
 
  
@@ -63,13 +79,9 @@ class ChatDistanceFactory(WebSocketServerFactory):
             self.clients[partner_key]["partner"] = client
             self.clients[client.peer]["partner"] = self.clients[partner_key]["object"]
     
-<<<<<<< HEAD
-    async def matchPartners(self):
-        close_client: Client = None
-=======
     def matchPartners(self):
         
->>>>>>> 7e42dab4cbad2ad94d603063177b1b9ce33149f2
+        close_client: Client = None
         for client_1 in self.clients.values():
             log.msg(f"Matching for {client_1.object.peer}")
             if client_1.partner != None:
@@ -78,15 +90,12 @@ class ChatDistanceFactory(WebSocketServerFactory):
             for client_2 in self.clients.values():
                 if client_2.partner != None:
                     continue
-<<<<<<< HEAD
-
                 if client_1 == client_2:
                     continue
-
                 if intersect(client_1, client_2):
                     if close_client == None:
                         close_client = client_2
-                    elif distance(client_1.location, client_2.location) < distance(client_1.location, client_2.location):
+                    elif distance(client_1.location, client_2.location) < distance(client_1.location, close_client.location):
                         close_client = client_2
 
             if close_client == None:
@@ -97,17 +106,6 @@ class ChatDistanceFactory(WebSocketServerFactory):
                 client_1.partner = close_client.object
                 close_client.partner = client_1.object
 
-=======
-                if client_1 == client_2:
-                    continue
-                if intersect(client_1, client_2):
-                    log.msg(f"matched {client_1.object.peer} to {client_2.object.peer}")
-                    client_1.partner = client_2.object
-                    client_2.partner = client_1.object
-                    break
-            log.err(f"Failed to find a partner for {client_1.object.peer}")
-            print(f"client {client_1.object.peer} has no partner this cycle")
->>>>>>> 7e42dab4cbad2ad94d603063177b1b9ce33149f2
         return None
 
  
@@ -138,23 +136,6 @@ def start_server(factory):
     reactor.run()
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    #log.startLogging(sys.stdout)
-    #factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
-    #asyncio.run(main())
-
-    loc_1 = Location(40.7128, -74.0060) # NYC coordinates
-    
-    loc_2 = Location(34.0522, -118.2437) # LA coordinates
-
-    loc_3 = 
-
-    print(distance(loc_1, loc_2))
-
-    c1 = Client(None, None, loc_1, 10)
-    c2 = Client(None, None, loc_2, 20)
-=======
     log.startLogging(sys.stdout)
     factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
     start_server(factory)
->>>>>>> 7e42dab4cbad2ad94d603063177b1b9ce33149f2
