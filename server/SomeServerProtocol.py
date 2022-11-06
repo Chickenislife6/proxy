@@ -1,7 +1,9 @@
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
 class SomeServerProtocol(WebSocketServerProtocol):
+    
     def onOpen(self):
+
         """
         Connection from client is opened. Fires after opening
         websockets handshake has been completed and we can send

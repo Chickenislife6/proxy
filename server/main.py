@@ -1,13 +1,11 @@
-import asyncio
 import sys
 import random
 import time
 from typing import Dict
- 
 from twisted.web.static import File
 from twisted.python import log
 from twisted.web.server import Site
-from twisted.internet import reactor
+from twisted.internet import reactor, ssl
  
 from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
  
@@ -42,7 +40,7 @@ class ChatDistanceFactory(WebSocketServerFactory):
                 self.url_set[client.http_request_uri] = client_data # adds the client and their associated URL to the database.
 
 
-    def unregister(self, client): # unregisters a client and stars searching for a new one for their former partner
+    def unregister(self, client: SomeServerProtocol): # unregisters a client and stars searching for a new one for their former partner
         """
         Remove client from list of managed connections.
         """
@@ -108,16 +106,26 @@ class ChatDistanceFactory(WebSocketServerFactory):
         else:
             c.partner.sendMessage(payload)
         
-def start_server(factory):
+def start_server():
     # static file server seving index.html as root
     factory = ChatDistanceFactory()
     factory.protocol = SomeServerProtocol
-    # websockets resource on "/ws" path
- 
+
     reactor.listenTCP(8080, factory)
     reactor.run()
 
+    # # static file server seving index.html as root
+    # root = File(".")
+ 
+    # factory.protocol = SomeServerProtocol
+    # resource = WebSocketResource(factory)
+    # # websockets resource on "/ws" path
+    # root.putChild(b"ws", resource)
+    
+    # site = Site(root)
+    # reactor.listenTCP(8080, site)
+    # reactor.run()
+
 if __name__ == "__main__":
     log.startLogging(sys.stdout)
-    factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
-    start_server(factory)
+    start_server()
