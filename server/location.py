@@ -6,6 +6,7 @@ import env
 import math
 
 def get_location(ip):
+
     # Returns: (Latitude: str, Longitude: str)
     # Raises: RuntimeError
     if (ip == "127.0.0.1"):

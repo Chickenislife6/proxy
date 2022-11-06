@@ -18,9 +18,6 @@ from datatypes import Client, Location
 from location import distance, get_location, intersect
  
  
-
- 
- 
 class ChatDistanceFactory(WebSocketServerFactory):
     def __init__(self, *args, **kwargs):
         super(ChatDistanceFactory, self).__init__(*args, **kwargs)
@@ -36,6 +33,7 @@ class ChatDistanceFactory(WebSocketServerFactory):
         self.clients[client.peer] = client_data # maps the client object to the string associated with the client.
 
         if client.http_request_uri != "/":
+            log.msg(f"client {client.peer} called from {client.http_request_uri}")
             if self.url_set.get(client.http_request_uri, None) != None:
                 self.url_set[client.http_request_uri].partner = client
                 client_data.partner = self.url_set[client.http_request_uri].object
@@ -112,7 +110,6 @@ class ChatDistanceFactory(WebSocketServerFactory):
         
 def start_server(factory):
     # static file server seving index.html as root
-    root = File(".")
     factory = ChatDistanceFactory()
     factory.protocol = SomeServerProtocol
     # websockets resource on "/ws" path
