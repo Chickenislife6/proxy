@@ -80,7 +80,10 @@ class ChatDistanceFactory(WebSocketServerFactory):
             self.clients[client.peer]["partner"] = self.clients[partner_key]["object"]
     
     def matchPartners(self):
+<<<<<<< HEAD
         
+=======
+>>>>>>> main
         close_client: Client = None
         for client_1 in self.clients.values():
             log.msg(f"Matching for {client_1.object.peer}")
@@ -90,6 +93,10 @@ class ChatDistanceFactory(WebSocketServerFactory):
             for client_2 in self.clients.values():
                 if client_2.partner != None:
                     continue
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
                 if client_1 == client_2:
                     continue
                 if intersect(client_1, client_2):
@@ -110,11 +117,13 @@ class ChatDistanceFactory(WebSocketServerFactory):
 
  
     def communicate(self, client, payload, isBinary):
-        self.matchPartners()
+        c = self.clients[client.peer]
+
+        if c.partner == None:
+            self.matchPartners()
         """
         Broker message from client to its partner.
         """
-        c = self.clients[client.peer]
         if not c.partner:
             log.err(f"No partner for {c.object.peer}")
             c.object.sendMessage(b"Sorry you dont have partner yet, check back in a minute")
@@ -122,7 +131,6 @@ class ChatDistanceFactory(WebSocketServerFactory):
             c.partner.sendMessage(payload)
         
 def start_server(factory):
-
     # static file server seving index.html as root
     root = File(".")
  
@@ -138,4 +146,8 @@ def start_server(factory):
 if __name__ == "__main__":
     log.startLogging(sys.stdout)
     factory = ChatDistanceFactory(u"ws://127.0.0.1:8080")
+<<<<<<< HEAD
     start_server(factory)
+=======
+    start_server(factory)
+>>>>>>> main
