@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>hehe</title>
+        <script type="text/javascript" src="../chatroom/hehe.js"></script>
+        <script type="text/javascript">
+            localStorage.getItem("storedUsername")
+        </script>
+        <link rel="stylesheet" href="../chatroom/hehe.css"/>
+    </head>
+    <header>
+        <h1>Tyler Sucks BTW</h1>
+    </header>
+    <body>
+        <h1>Hoe</h1>
+        <div class="div1" id="myForm">
+            <h1>Chat</h1>
+            <div id="chat">
+                <p id = "p1">Conversation Start</p>
+            </div>
+            <label><b>Message</b></label>
+            <form>
+                <textarea placeholder="Type message.." id="msg" class="form" onchange="sendMsg()"></textarea>
+                <button type="submit" class="btn" id="submitBtn" class="form">Send</button>
+                <a href="../index.html"><button type="button" class="btn cancel" onclick="closeForm()">Close</button></a>
+            </form>
+        </div>
+    </body>
+    <footer>
+        <p>wassup</p>
+    </footer>
+</html>
