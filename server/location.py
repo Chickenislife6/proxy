@@ -3,7 +3,6 @@ import time
 import requests
 from datatypes import Location, Client
 import env
-import bs4
 import math
 
 def get_location(ip):
