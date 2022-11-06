@@ -128,11 +128,15 @@ def start_server():
     # reactor.listenTCP(8080, site)
     # reactor.run()
 
-    # ssl.create_default_context
+    with open("./keys/ssl.localhost.key") as keyFile:
+        with open("./keys/ssl.localhost.cert") as certFile:
+            cert = ssl.PrivateCertificate.loadPEM(keyFile.read() + certFile.read())
+    contextfactory = ssl.DefaultOpenSSLContextFactory("./keys/ssl.localhost.key", "./keys/ssl.localhost.cert")
     factory = ChatDistanceFactory()
     factory.protocol = SomeServerProtocol
-    listenWS(factory, )
-    reactor.listenTCP(8080, factory, )
+    factory.isSecure = True
+    # listenWS(factory, contextfactory)
+    reactor.listenSSL(8080, factory, contextfactory)
     reactor.run()
 
 
